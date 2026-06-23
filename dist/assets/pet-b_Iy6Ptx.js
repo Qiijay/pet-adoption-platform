@@ -1,0 +1,1 @@
+import{x as e}from"./index-CfzQLhVy.js";function n(t){return e({url:"/pets",method:"get",params:t})}function o(t){return e({url:`/pets/${t}`,method:"get"})}function s(t){return e({url:"/pets",method:"post",data:t})}function a(t,r){return e({url:`/pets/${t}`,method:"put",data:r})}function p(t){return e({url:`/pets/${t}`,method:"delete"})}export{o as a,s as c,p as d,n as g,a as u};

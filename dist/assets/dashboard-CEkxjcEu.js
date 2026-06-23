@@ -1,0 +1,1 @@
+import{x as t}from"./index-CfzQLhVy.js";function a(){return t({url:"/admin/dashboard",method:"get"})}function o(){return t({url:"/admin/statistics",method:"get"})}function n(r){return t({url:"/admin/report/adopt",method:"get",params:r})}function i(r){return t({url:"/admin/report/abnormal",method:"get",params:r})}export{o as a,n as b,i as c,a as g};

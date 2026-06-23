@@ -1,0 +1,1 @@
+import{x as t}from"./index-CfzQLhVy.js";function d(o){return t({url:"/adoptions",method:"post",data:o})}function e(){return t({url:"/adoptions/my",method:"get"})}function r(){return t({url:"/adoptions/audit",method:"get"})}function a(o,n,i){return t({url:`/adoptions/${o}/audit`,method:"put",data:{status:n,remark:i}})}export{r as a,a as b,e as g,d as s};
