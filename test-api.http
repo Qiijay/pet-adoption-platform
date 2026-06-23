@@ -1,0 +1,61 @@
+### 登录测试
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser2",
+  "password": "123456"
+}
+
+### 注册测试
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser2",
+  "password": "123456",
+  "phone": "13800138002",
+  "email": "test2@pet.com",
+  "realName": "测试用户2"
+}
+
+### 用户列表
+GET http://localhost:8080/api/users/list
+
+### 发布宠物（需要登录后获取token）
+POST http://localhost:8080/api/pets/add
+Content-Type: application/json
+
+{
+  "name": "小花",
+  "species": "猫",
+  "breed": "橘猫",
+  "age": 12,
+  "gender": "母",
+  "weight": 3.5,
+  "color": "橘色",
+  "healthStatus": "健康",
+  "description": "一只温顺可爱的橘猫，喜欢晒太阳",
+  "imageUrl": "https://example.com/cat.jpg",
+  "shelterId": 1
+}
+
+### 宠物列表
+GET http://localhost:8080/api/pets/list
+
+### 宠物详情
+GET http://localhost:8080/api/pets/1
+
+### 提交领养申请
+POST http://localhost:8080/api/adoptions/apply
+Content-Type: application/json
+
+{
+  "petId": 1,
+  "homeEnvironment": "小区楼房，三室一厅，有阳台",
+  "experience": "以前养过一只猫，有3年养宠经验",
+  "reason": "非常喜欢小花，希望能给她一个温暖的家"
+}
+
+### 查询我的申请记录
+GET http://localhost:8080/api/adoptions/my
