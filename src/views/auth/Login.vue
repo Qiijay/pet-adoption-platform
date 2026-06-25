@@ -21,11 +21,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+import { login } from '@/api/auth'
 
 const router = useRouter()
-const userStore = useUserStore()
 const loginForm = ref(null)
 const loading = ref(false)
 const form = reactive({ username: '', password: '' })
@@ -39,11 +38,21 @@ const handleLogin = async () => {
   await loginForm.value.validate()
   loading.value = true
   try {
-    await userStore.loginAction(form)
-    ElMessage.success('登录成功')
-    router.push('/home')
+    const res = await login(form)
+    if (res.code === 200) {
+      localStorage.setItem('token', res.data.token)
+      localStorage.setItem('username', res.data.username)
+      localStorage.setItem('userId', res.data.userId)
+      localStorage.setItem('role', res.data.role)
+      ElMessage.success('登录成功')
+      // 跳转到宠物列表并刷新页面，让导航栏更新
+      await router.push('/pets')
+      window.location.reload()
+    } else {
+      ElMessage.error(res.message || '登录失败')
+    }
   } catch (e) {
-    // 错误已在拦截器中处理
+    ElMessage.error('登录失败，请重试')
   } finally {
     loading.value = false
   }

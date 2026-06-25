@@ -1,117 +1,118 @@
 <template>
-  <div class="pet-detail" v-loading="loading">
-    <el-row :gutter="20">
-      <el-col :xs="24" :md="12">
-        <el-image
-          :src="pet.image"
-          fit="cover"
-          style="width:100%; border-radius:8px; aspect-ratio:4/3"
-          :preview-src-list="[pet.image]"
-          lazy
-        />
-      </el-col>
-      <el-col :xs="24" :md="12">
+  <div class="pet-detail" v-if="pet">
+    <div class="detail-card">
+      <div class="detail-image">
+        <img :src="pet.imageUrl || 'https://via.placeholder.com/400x300?text=宠物图片'" alt="宠物图片" />
+      </div>
+      <div class="detail-info">
         <h1>{{ pet.name }}</h1>
-        <el-tag size="large">{{ pet.type === 'dog' ? '狗' : pet.type === 'cat' ? '猫' : '其他' }}</el-tag>
-        <p class="desc">{{ pet.description }}</p>
-        <p>年龄：{{ pet.age }}个月</p>
-        <p>救助站：{{ pet.shelterName }}</p>
-        <p>发布日期：{{ pet.createTime }}</p>
-        <el-button
-          v-if="userStore.token && userStore.role === 'user'"
-          type="primary"
-          size="large"
-          @click="showAdoptForm = true"
-        >
+        <p><strong>品种：</strong>{{ pet.species }} - {{ pet.breed || '未知' }}</p>
+        <p><strong>年龄：</strong>{{ pet.age }} 个月</p>
+        <p><strong>性别：</strong>{{ pet.gender }}</p>
+        <p><strong>体重：</strong>{{ pet.weight }} kg</p>
+        <p><strong>颜色：</strong>{{ pet.color }}</p>
+        <p><strong>健康状况：</strong>{{ pet.healthStatus }}</p>
+        <p><strong>状态：</strong><span :class="'status-' + pet.status">{{ pet.status }}</span></p>
+        <p><strong>描述：</strong>{{ pet.description }}</p>
+        <router-link v-if="pet.status === 'AVAILABLE'" :to="'/apply/' + pet.id" class="btn-apply">
           申请领养
-        </el-button>
-        <el-button v-else-if="!userStore.token" @click="$router.push('/login')">
-          登录后申请领养
-        </el-button>
-      </el-col>
-    </el-row>
-
-    <!-- 领养申请对话框 -->
-    <el-dialog v-model="showAdoptForm" title="领养申请" width="500px">
-      <el-form :model="adoptForm" :rules="adoptRules" ref="adoptFormRef">
-        <el-form-item label="申请人姓名" prop="applicantName">
-          <el-input v-model="adoptForm.applicantName" />
-        </el-form-item>
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="adoptForm.phone" />
-        </el-form-item>
-        <el-form-item label="申请理由" prop="reason">
-          <el-input type="textarea" :rows="4" v-model="adoptForm.reason" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showAdoptForm = false">取消</el-button>
-        <el-button type="primary" @click="submitAdopt" :loading="submitting">提交申请</el-button>
-      </template>
-    </el-dialog>
+        </router-link>
+        <button v-else class="btn-disabled" disabled>已不可领养</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import { getPetDetail } from '@/api/pet'
-import { submitAdoption } from '@/api/adopt'
-import { ElMessage } from 'element-plus'
 
 const route = useRoute()
-const userStore = useUserStore()
-const pet = ref({})
-const loading = ref(false)
-const showAdoptForm = ref(false)
-const submitting = ref(false)
-const adoptFormRef = ref(null)
-const adoptForm = reactive({
-  applicantName: '',
-  phone: '',
-  reason: ''
-})
-const adoptRules = {
-  applicantName: [{ required: true, message: '请输入姓名' }],
-  phone: [{ required: true, message: '请输入电话' }],
-  reason: [{ required: true, message: '请填写申请理由' }]
-}
+const pet = ref(null)
 
-const fetchDetail = async () => {
-  loading.value = true
-  const res = await getPetDetail(route.params.id)
-  pet.value = res.data
-  loading.value = false
-}
-
-const submitAdopt = async () => {
-  if (!adoptFormRef.value) return
-  await adoptFormRef.value.validate()
-  submitting.value = true
+onMounted(async () => {
   try {
-    await submitAdoption({
-      petId: pet.value.id,
-      ...adoptForm
-    })
-    ElMessage.success('申请已提交，等待审核')
-    showAdoptForm.value = false
-  } finally {
-    submitting.value = false
+    const id = route.params.id
+    const res = await getPetDetail(id)
+    if (res.code === 200) {
+      pet.value = res.data
+    }
+  } catch (err) {
+    console.error('加载宠物详情失败', err)
   }
-}
-
-onMounted(fetchDetail)
+})
 </script>
 
 <style scoped>
 .pet-detail {
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
-.desc {
-  margin: 15px 0;
-  line-height: 1.8;
+.detail-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.detail-image img {
+  width: 100%;
+  border-radius: 10px;
+}
+.detail-info h1 {
+  font-size: 32px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+.detail-info p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #555;
+}
+.status-AVAILABLE {
+  color: #27ae60;
+  font-weight: bold;
+}
+.status-RESERVED {
+  color: #f39c12;
+  font-weight: bold;
+}
+.status-ADOPTED {
+  color: #95a5a6;
+  font-weight: bold;
+}
+.btn-apply {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 40px;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-apply:hover {
+  background: #219a52;
+}
+.btn-disabled {
+  margin-top: 20px;
+  padding: 12px 40px;
+  background: #95a5a6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: not-allowed;
+}
+@media (max-width: 768px) {
+  .detail-card {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -1,100 +1,108 @@
 <template>
-  <div class="pet-list-page">
-    <h2>宠物列表</h2>
-    <el-form :inline="true" :model="searchForm" class="search-form">
-      <el-form-item label="关键词">
-        <el-input v-model="searchForm.keyword" placeholder="名称" clearable />
-      </el-form-item>
-      <el-form-item label="类型">
-        <el-select v-model="searchForm.type" clearable>
-          <el-option label="狗" value="dog" />
-          <el-option label="猫" value="cat" />
-          <el-option label="其他" value="other" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="年龄范围">
-        <el-input-number v-model="searchForm.minAge" :min="0" /> -
-        <el-input-number v-model="searchForm.maxAge" :min="0" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="search">搜索</el-button>
-        <el-button @click="reset">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <div v-loading="loading" class="pet-grid">
-      <PetCard v-for="pet in petList" :key="pet.id" :pet="pet" @click="goDetail(pet.id)" />
-      <el-empty v-if="!loading && petList.length === 0" />
+  <div class="pet-list">
+    <h1>🐾 待领养宠物</h1>
+    <div class="pet-grid">
+      <div v-for="pet in pets" :key="pet.id" class="pet-card">
+        <div class="pet-image">
+          <img :src="pet.imageUrl || 'https://via.placeholder.com/300x200?text=宠物图片'" alt="宠物图片" />
+        </div>
+        <div class="pet-info">
+          <h3>{{ pet.name }}</h3>
+          <p><strong>品种：</strong>{{ pet.species }} - {{ pet.breed || '未知' }}</p>
+          <p><strong>年龄：</strong>{{ pet.age }} 个月</p>
+          <p><strong>性别：</strong>{{ pet.gender }}</p>
+          <p><strong>状态：</strong><span :class="'status-' + pet.status">{{ pet.status }}</span></p>
+          <router-link :to="'/pets/' + pet.id" class="btn-detail">查看详情</router-link>
+        </div>
+      </div>
     </div>
-    <el-pagination
-      style="text-align:center;margin-top:20px"
-      v-model:current-page="page"
-      :page-size="size"
-      :total="total"
-      @current-change="fetchPets"
-    />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import { getPetList } from '@/api/pet'
-import PetCard from '@/components/PetCard.vue'
 
-const router = useRouter()
-const searchForm = reactive({
-  keyword: '',
-  type: '',
-  minAge: null,
-  maxAge: null
-})
-const petList = ref([])
-const loading = ref(false)
-const page = ref(1)
-const size = ref(12)
-const total = ref(0)
+const pets = ref([])
 
-const fetchPets = async () => {
-  loading.value = true
-  const params = {
-    page: page.value,
-    size: size.value,
-    ...searchForm
+onMounted(async () => {
+  try {
+    const res = await getPetList()
+    if (res.code === 200) {
+      pets.value = res.data
+    }
+  } catch (err) {
+    console.error('加载宠物列表失败', err)
   }
-  const res = await getPetList(params)
-  petList.value = res.data.records
-  total.value = res.data.total
-  loading.value = false
-}
-
-const search = () => {
-  page.value = 1
-  fetchPets()
-}
-
-const reset = () => {
-  Object.assign(searchForm, { keyword: '', type: '', minAge: null, maxAge: null })
-  search()
-}
-
-const goDetail = (id) => router.push(`/pet/${id}`)
-
-onMounted(fetchPets)
+})
 </script>
 
 <style scoped>
-.pet-list-page {
+.pet-list {
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  margin: 0 auto;
+  padding: 20px;
 }
-.search-form {
-  margin-bottom: 20px;
+.pet-list h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 .pet-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+.pet-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+.pet-card:hover {
+  transform: translateY(-5px);
+}
+.pet-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+.pet-info {
+  padding: 20px;
+}
+.pet-info h3 {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.pet-info p {
+  margin: 5px 0;
+  color: #555;
+}
+.status-AVAILABLE {
+  color: #27ae60;
+  font-weight: bold;
+}
+.status-RESERVED {
+  color: #f39c12;
+  font-weight: bold;
+}
+.status-ADOPTED {
+  color: #95a5a6;
+  font-weight: bold;
+}
+.btn-detail {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: #3498db;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.btn-detail:hover {
+  background: #2980b9;
 }
 </style>

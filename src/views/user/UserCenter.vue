@@ -1,61 +1,59 @@
 <template>
   <div class="user-center">
-    <h2>个人中心</h2>
-    <el-tabs v-model="activeTab">
-      <el-tab-pane label="个人信息" name="info">
-        <el-form :model="userForm" ref="userFormRef" style="max-width:500px">
-          <el-form-item label="昵称">
-            <el-input v-model="userForm.nickname" />
-          </el-form-item>
-          <el-form-item label="手机号">
-            <el-input v-model="userForm.phone" />
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="userForm.email" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="saveInfo">保存修改</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="我的领养记录" name="adoptions">
-        <MyAdoptions />
-      </el-tab-pane>
-    </el-tabs>
+    <h1>个人中心</h1>
+    <el-card v-loading="loading">
+      <el-descriptions title="个人信息" :column="1" border>
+        <el-descriptions-item label="用户名">{{ userInfo.username }}</el-descriptions-item>
+        <el-descriptions-item label="角色">{{ userInfo.role }}</el-descriptions-item>
+        <el-descriptions-item label="手机号">{{ userInfo.phone || '未设置' }}</el-descriptions-item>
+        <el-descriptions-item label="邮箱">{{ userInfo.email || '未设置' }}</el-descriptions-item>
+        <el-descriptions-item label="真实姓名">{{ userInfo.realName || '未设置' }}</el-descriptions-item>
+      </el-descriptions>
+    </el-card>
+    <div style="margin-top: 20px;">
+      <h2>我的领养记录</h2>
+      <MyAdoptions />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
-import { ElMessage } from 'element-plus'
+import { ref, onMounted } from 'vue'
 import MyAdoptions from './MyAdoptions.vue'
+import { getUserInfo } from '@/api/auth'
 
-const userStore = useUserStore()
-const activeTab = ref('info')
-const userForm = reactive({
-  nickname: '',
+const userInfo = ref({
+  username: '',
+  role: '',
   phone: '',
-  email: ''
+  email: '',
+  realName: ''
 })
+const loading = ref(false)
 
 onMounted(async () => {
-  await userStore.fetchUserInfo()
-  if (userStore.userInfo) {
-    Object.assign(userForm, userStore.userInfo)
+  loading.value = true
+  try {
+    const res = await getUserInfo()
+    if (res.code === 200) {
+      userInfo.value = res.data
+    }
+  } catch (err) {
+    console.error('获取用户信息失败', err)
   }
+  loading.value = false
 })
-
-const saveInfo = async () => {
-  await userStore.updateUserInfo(userForm)
-  ElMessage.success('信息更新成功')
-}
 </script>
 
 <style scoped>
 .user-center {
-  max-width: 900px;
-  margin: 20px auto;
+  max-width: 800px;
+  margin: 40px auto;
   padding: 20px;
+}
+.user-center h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 </style>

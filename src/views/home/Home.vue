@@ -1,106 +1,80 @@
 <template>
   <div class="home">
-    <!-- 搜索筛选区 -->
-    <div class="search-section">
-      <el-input
-        v-model="searchQuery"
-        placeholder="搜索宠物名称"
-        clearable
-        @change="fetchPets"
-        class="search-input"
-      >
-        <template #prefix><el-icon><Search /></el-icon></template>
-      </el-input>
-      <el-select v-model="filterType" placeholder="宠物类型" clearable @change="fetchPets" class="filter-select">
-        <el-option label="狗" value="dog" />
-        <el-option label="猫" value="cat" />
-        <el-option label="其他" value="other" />
-      </el-select>
+    <div class="hero">
+      <h1>🐾 给毛孩子一个温暖的家</h1>
+      <p>领养代替购买，让爱不再流浪</p>
+      <router-link to="/pets" class="btn-hero">查看待领养宠物</router-link>
     </div>
-
-    <!-- 宠物卡片网格 -->
-    <div class="pet-grid" v-loading="loading">
-      <PetCard v-for="pet in petList" :key="pet.id" :pet="pet" @click="goDetail(pet.id)" />
-      <el-empty v-if="!loading && petList.length === 0" description="暂无宠物数据" />
-    </div>
-
-    <!-- 分页 -->
-    <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :total="total"
-        layout="prev, pager, next"
-        @current-change="fetchPets"
-      />
+    <div class="features">
+      <div class="feature-item">
+        <h3>🐶 真实信息</h3>
+        <p>所有宠物信息真实可靠</p>
+      </div>
+      <div class="feature-item">
+        <h3>🏠 简单流程</h3>
+        <p>在线申请，快速审核</p>
+      </div>
+      <div class="feature-item">
+        <h3>❤️ 爱心传递</h3>
+        <p>给流浪动物一个家</p>
+      </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { getPetList } from '@/api/pet'
-import PetCard from '@/components/PetCard.vue'
-
-const router = useRouter()
-const searchQuery = ref('')
-const filterType = ref('')
-const petList = ref([])
-const loading = ref(false)
-const currentPage = ref(1)
-const pageSize = ref(12)
-const total = ref(0)
-
-const fetchPets = async () => {
-  loading.value = true
-  try {
-    const res = await getPetList({
-      page: currentPage.value,
-      size: pageSize.value,
-      keyword: searchQuery.value,
-      type: filterType.value
-    })
-    petList.value = res.data.records
-    total.value = res.data.total
-  } finally {
-    loading.value = false
-  }
-}
-
-const goDetail = (id) => {
-  router.push(`/pet/${id}`)
-}
-
-onMounted(() => {
-  fetchPets()
-})
-</script>
 
 <style scoped>
 .home {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
 }
-.search-section {
-  display: flex;
-  gap: 20px;
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 20px;
+  margin: 20px;
+}
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+.hero p {
+  font-size: 20px;
   margin-bottom: 30px;
 }
-.search-input {
-  width: 300px;
+.btn-hero {
+  display: inline-block;
+  padding: 15px 40px;
+  background: #fff;
+  color: #764ba2;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
 }
-.filter-select {
-  width: 150px;
+.btn-hero:hover {
+  background: #f0f0f0;
 }
-.pet-grid {
+.features {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 40px 20px;
 }
-.pagination {
+.feature-item {
   text-align: center;
-  margin-top: 30px;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.feature-item h3 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.feature-item p {
+  color: #666;
 }
 </style>

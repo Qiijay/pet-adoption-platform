@@ -16,17 +16,10 @@ export function register(data) {
   })
 }
 
+// 获取用户详细信息
 export function getUserInfo() {
   return request({
-    url: '/auth/userinfo',
+    url: '/users/info',
     method: 'get'
-  })
-}
-
-export function updateUserInfo(data) {
-  return request({
-    url: '/auth/userinfo',
-    method: 'put',
-    data
   })
 }

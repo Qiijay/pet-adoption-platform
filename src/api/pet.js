@@ -1,10 +1,9 @@
 import request from '@/utils/request'
 
-export function getPetList(params) {
+export function getPetList() {
   return request({
-    url: '/pets',
-    method: 'get',
-    params
+    url: '/pets/list',
+    method: 'get'
   })
 }
 
@@ -17,23 +16,8 @@ export function getPetDetail(id) {
 
 export function createPet(data) {
   return request({
-    url: '/pets',
+    url: '/pets/add',
     method: 'post',
     data
-  })
-}
-
-export function updatePet(id, data) {
-  return request({
-    url: `/pets/${id}`,
-    method: 'put',
-    data
-  })
-}
-
-export function deletePet(id) {
-  return request({
-    url: `/pets/${id}`,
-    method: 'delete'
   })
 }
