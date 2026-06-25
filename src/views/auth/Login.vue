@@ -45,7 +45,6 @@ const handleLogin = async () => {
       localStorage.setItem('userId', res.data.userId)
       localStorage.setItem('role', res.data.role)
       ElMessage.success('登录成功')
-      // 跳转到宠物列表并刷新页面，让导航栏更新
       await router.push('/pets')
       window.location.reload()
     } else {
@@ -60,13 +59,6 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-.login-card {
-  width: 400px;
-}
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+.login-card { width: 400px; }
 </style>

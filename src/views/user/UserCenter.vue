@@ -10,7 +10,7 @@
         <el-descriptions-item label="真实姓名">{{ userInfo.realName || '未设置' }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
-    <div style="margin-top: 20px;">
+    <div style="margin-top:20px;">
       <h2>我的领养记录</h2>
       <MyAdoptions />
     </div>
@@ -22,38 +22,20 @@ import { ref, onMounted } from 'vue'
 import MyAdoptions from './MyAdoptions.vue'
 import { getUserInfo } from '@/api/auth'
 
-const userInfo = ref({
-  username: '',
-  role: '',
-  phone: '',
-  email: '',
-  realName: ''
-})
+const userInfo = ref({ username: '', role: '', phone: '', email: '', realName: '' })
 const loading = ref(false)
 
 onMounted(async () => {
   loading.value = true
   try {
     const res = await getUserInfo()
-    if (res.code === 200) {
-      userInfo.value = res.data
-    }
-  } catch (err) {
-    console.error('获取用户信息失败', err)
-  }
+    if (res.code === 200) userInfo.value = res.data
+  } catch (err) { console.error('获取用户信息失败', err) }
   loading.value = false
 })
 </script>
 
 <style scoped>
-.user-center {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-}
-.user-center h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #2c3e50;
-}
+.user-center { max-width: 800px; margin: 40px auto; padding: 20px; }
+.user-center h1 { text-align: center; margin-bottom: 30px; color: #2c3e50; }
 </style>

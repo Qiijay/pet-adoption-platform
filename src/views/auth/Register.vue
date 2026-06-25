@@ -63,13 +63,6 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-.register-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-.register-card {
-  width: 450px;
-}
+.register-container { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+.register-card { width: 450px; }
 </style>

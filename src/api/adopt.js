@@ -14,3 +14,19 @@ export function getMyAdoptions() {
     method: 'get'
   })
 }
+
+export function getPendingAudit(params) {
+  return request({
+    url: '/adoptions/audit',
+    method: 'get',
+    params
+  })
+}
+
+export function auditAdoption(id, status, remark) {
+  return request({
+    url: `/adoptions/${id}/audit`,
+    method: 'put',
+    data: { status, remark }
+  })
+}

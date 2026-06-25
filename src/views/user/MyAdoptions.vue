@@ -38,12 +38,8 @@ onMounted(async () => {
   loading.value = true
   try {
     const res = await getMyAdoptions()
-    if (res.code === 200) {
-      adoptions.value = res.data
-    }
-  } catch (err) {
-    console.error('加载失败', err)
-  }
+    if (res.code === 200) adoptions.value = res.data
+  } catch (err) { console.error('加载失败', err) }
   loading.value = false
 })
 </script>

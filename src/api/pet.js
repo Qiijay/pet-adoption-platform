@@ -21,3 +21,18 @@ export function createPet(data) {
     data
   })
 }
+
+export function updatePet(id, data) {
+  return request({
+    url: `/pets/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deletePet(id) {
+  return request({
+    url: `/pets/${id}`,
+    method: 'delete'
+  })
+}

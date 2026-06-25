@@ -6,6 +6,8 @@ import PetList from '../views/pet/PetList.vue'
 import PetDetail from '../views/pet/PetDetail.vue'
 import MyAdoptions from '../views/user/MyAdoptions.vue'
 import UserCenter from '../views/user/UserCenter.vue'
+import PetManage from '../views/admin/PetManage.vue'
+import AuditAdopt from '../views/admin/AuditAdopt.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -15,6 +17,8 @@ const routes = [
   { path: '/pets/:id', name: 'PetDetail', component: PetDetail },
   { path: '/my-adoptions', name: 'MyAdoptions', component: MyAdoptions },
   { path: '/user-center', name: 'UserCenter', component: UserCenter },
+  { path: '/admin/pets', name: 'PetManage', component: PetManage },
+  { path: '/admin/audit', name: 'AuditAdopt', component: AuditAdopt },
 ]
 
 const router = createRouter({

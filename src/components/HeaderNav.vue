@@ -10,12 +10,10 @@
     <el-menu-item index="/">首页</el-menu-item>
     <el-menu-item index="/pets">宠物列表</el-menu-item>
     
-    <!-- 登录后显示 -->
     <template v-if="isLoggedIn">
       <el-menu-item index="/user-center">个人中心</el-menu-item>
       <el-menu-item index="/my-adoptions">我的领养</el-menu-item>
       
-      <!-- 管理员菜单：SYSTEM_ADMIN 或 SHELTER_ADMIN -->
       <template v-if="isAdmin">
         <el-sub-menu index="/admin">
           <template #title>管理后台</template>
@@ -49,9 +47,7 @@ const isAdmin = computed(() => {
   return role === 'SYSTEM_ADMIN' || role === 'SHELTER_ADMIN'
 })
 
-const activeMenu = computed(() => {
-  return route.path
-})
+const activeMenu = computed(() => route.path)
 
 const handleLogout = () => {
   localStorage.removeItem('token')
